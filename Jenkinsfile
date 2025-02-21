@@ -13,23 +13,38 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''#!/bin/bash
-                echo 'Test Step: We run testing tool like pytest here'
+                echo 'Test Step: Setting up virtual environment and running tests'
 
-                # TODO fill out the path to conda here
-                # sudo /PATH/TO/CONDA init
+                # Define virtual environment path
+                VENV_PATH="venv"
 
-                source ~/mlip/mlip/bin/activate
+                # Remove old virtual environment if it exists
+                if [ -d "$VENV_PATH" ]; then
+                    echo "Removing existing virtual environment..."
+                    rm -rf $VENV_PATH
+                fi
 
-                # TODO Complete the command to run pytest
-                # sudo /PATH/TO/CONDA run -n <Envinronment Name> <Command you want to run>
-                pytest
+                # Create a new virtual environment
+                echo "Creating a new virtual environment..."
+                python3 -m venv $VENV_PATH
 
+                # Activate the virtual environment
+                source $VENV_PATH/bin/activate
+
+                # Upgrade pip and install dependencies
+                echo "Installing dependencies from requirements.txt..."
+                pip install --upgrade pip
+                pip install -r requirements.txt
+
+                # Run pytest (ensure the test directory is correct)
+                echo "Running tests with pytest..."
+                pytest tests/  # Modify path if needed
+
+                # Deactivate virtual environment
                 deactivate
 
-                echo 'pytest not runned'
-                exit 1 #comment this line after implementing Jenkinsfile
+                echo 'Tests completed successfully'
                 '''
-
             }
         }
         stage('Deploy') {
