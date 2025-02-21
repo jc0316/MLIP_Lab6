@@ -36,11 +36,8 @@ pipeline {
                 pip install --upgrade pip
                 pip install -r requirements.txt
 
-                # Run pytest (ensure the test directory is correct)
-                echo "Running tests with pytest..."
-                pytest tests/  # Modify path if needed
+                pytest
 
-                # Deactivate virtual environment
                 deactivate
 
                 echo 'Tests completed successfully'
